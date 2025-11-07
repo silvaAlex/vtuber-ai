@@ -1,0 +1,9 @@
+python-dotenv
+pyvts
+PyYAML
+websocket-client==1.6.1
+websockets==11.0.3
+requests
+ollama
+playsound
+murf
