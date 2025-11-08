@@ -7,7 +7,7 @@ from utils.applogger import AppLogger
 class ChatbotEngine:
     def __init__(self, logger: AppLogger, memory_manager: MemoryManager):
         self.logger = logger
-        self.model = "kiana" #ollama-model
+        self.model = "llama"
         self.client = ollama.Client(host="http://localhost:11434")
         self.memory = memory_manager
         self.context = []
