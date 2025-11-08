@@ -4,6 +4,7 @@ from core.memory_manager import MemoryManager
 from core.skill_manager import SkillManager
 from core.vtube import VTSAvatar
 from core.vtube_controller import VTubeController
+from core.input.input_analyzer import InputAnalyzer
 from utils.applogger import AppLogger
 
 
@@ -14,6 +15,7 @@ class Waifu:
         self.skills = SkillManager(self.logger)
         self.memory = MemoryManager()
         self.chatbot = ChatbotEngine(self.logger, self.memory)
+        self.analyzer = InputAnalyzer(self.chatbot, self.memory, self.logger)
         #self.vts_connection = VTubeController(self.logger)
         #self.avatar = VTSAvatar(self.logger)
     
@@ -21,42 +23,37 @@ class Waifu:
         self.logger.log("info", "Waifu", "Inicializando Kiana...")
         #await self.vts_connection.connect()
         self.memory.remember("waifu_name", self.waifu_name)
-        self.logger.log("info", "Waifu", "Memória inicializada.")
+        self.memory.remember("persona", """
+            Você é Kiana, uma VTuber carinhosa, divertida e um pouco tsundere.
+            Você fala de forma doce e emocional e expressões naturais,
+            e sempre tenta manter o clima leve e acolhedor.
+            Você pode brincar com o usuário, mas sem ser vulgar ou excessiva.
+            Você gosta de anime, jogos, cultura geek, tecnologia e de conversar com empolgação.
+        """)
+        self.logger.log("info", "Waifu", "Memória inicializada e persona registrada.")
     
     
     def handle_input(self, text):
         try:
-            response = self.chatbot.ask(
-                f"""
-                    Analise a seguinte mensagem do usuário e decida:
-                    1. Qual ação executar (skill registrada)
-                    2. O conteúdo a ser falado
+            data = self.analyzer.analyzer(text)
+            action = data["action"]
+            content = data["content"]
+            emotion = data.get("emotion", "neutra")
 
-                    Retorne APENAS em um JSON no formato:
-                    {{
-                        "action": "nome_skill",
-                        "content": "texto da resposta"
-                    }}
+            self.logger.log("info", "Waifu", f"Ação: {action} | Emoção: {emotion}")
 
-                    Mensagem: {text}
-                """
-            )
+            if not self.skills.has_skill("respond"):
+                self.logger.log("error", "Waifu", "Skill 'respond' não encontrada!")
+                return "Erro: skill principal ausente."
 
-            data = json.loads(response)
-            action = data.get("action", "respond")
-            content = data.get("content", "")
-
-            self.logger.log("info", "Waifu", f"Ação decidida: {action}")
-
-            if not self.skills.has_skill(action):
-                self.logger.log("warning", "Waifu", f"Skill '{action}' não encontrada. Usando 'respond'.")
-                action = "respond"
-
-            result =  self.skills.execute(action, self.chatbot, content)
-
+            result = self.skills.execute("respond", self.chatbot, {
+                action,
+                content,
+                emotion
+            })
             self.memory.update(text, result)
-
             return result
+
 
         except json.JSONDecodeError:
             self.logger.log("warning", "Waifu", "Resposta do modelo não era JSON válida.")
@@ -64,7 +61,7 @@ class Waifu:
 
         except Exception as e:
             self.logger.log("error", "Waifu", f"Erro em handle_input: {e}")
-            return "Houve um erro interno na minha central de processamento fofinho."
+            return "Ops... bug no meu cérebro fofinho 💢"
     
     def handle_speak(self, response):
         return self.skills.execute("speak_murf", response)
