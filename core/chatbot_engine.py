@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import ollama
 import requests
 from core.memory_manager import MemoryManager
@@ -6,8 +8,11 @@ from utils.applogger import AppLogger
 
 class ChatbotEngine:
     def __init__(self, logger: AppLogger, memory_manager: MemoryManager):
+
+        load_dotenv()
+        
         self.logger = logger
-        self.model = "llama"
+        self.model = os.getenv("MODEL_IA", "llama")
         self.client = ollama.Client(host="http://localhost:11434")
         self.memory = memory_manager
         self.context = []
@@ -44,4 +49,7 @@ class ChatbotEngine:
             self.logger.log("error","ChatbotEngine",f"Erro ao conectar com Ollama: {e}")
             return "Desculpe, perdi a conexão com meu cérebro eletrônico por um momento."
         
-   
+    def update_context(self, role, content, max_length=15):
+        self.context.append({"role": role, "content": content})
+        if len(self.context) > max_length:
+            self.context = self.context[-max_length:]

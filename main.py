@@ -9,10 +9,10 @@ async def main():
 
     while True:
         user_input = input("Você: ")
-        response = waifu.handle_input(user_input)
+        response = await waifu.handle_input(user_input)
+        waifu.handle_output(response)
+        # waifu.handle_speak(spoken_text)
 
-        #waifu.handle_speak(response)
-        print(f"Kiana: {response}")
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -52,7 +52,7 @@ class InputAnalyzer:
 
         return "DESCONHECIDO"
 
-    def analyzer(self, text):
+    def analyze(self, text):
         """Decide a ação e emoção a partir do texto."""
         emotion = self._detect_emotion(text)
         intent = self._detect_intent(text)

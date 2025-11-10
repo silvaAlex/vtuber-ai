@@ -22,10 +22,14 @@ class VTubeController:
         )
       
     async def connect(self):
-       await self.vts.connect()
-       await self.vts.request_authenticate_token()
-       await self.vts.request_authenticate()
-       self.logger.log("info", "VTube Studio", "Conectado ao VTube Studio")
+        try:
+            await self.vts.connect()
+            await self.vts.request_authenticate_token()
+            await self.vts.request_authenticate()
+            self.logger.log("info", "VTube Studio", "Conectado ao VTube Studio")
+        except Exception as e:
+            self.logger.log("error", "VTube Studio", "erro ao Conectar ao VTube Studio - {e}")
+    
 
     async def close(self):
        await self.vts.close()
