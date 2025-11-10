@@ -33,8 +33,6 @@ class SkillManager:
             self.skills[name] = skill_instance
             for alias in aliases:
                 self.skills[alias] = skill_instance
-
-            self.logger.log("info", "SkillManager", f"Skill '{name}' carregada com sucesso.")
         except Exception as e:
             self.logger.log("error", "SkillManager", f"Erro ao carregar skill '{skill_name}': {e}")
             self.logger.log("debug", "SkillManager", traceback.format_exc())

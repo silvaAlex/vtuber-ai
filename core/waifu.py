@@ -21,7 +21,7 @@ class Waifu:
     
     async def init(self):
         self.logger.log("info", "Waifu", "Inicializando Kiana...")
-        await self.vts_connection.connect()
+        #await self.vts_connection.connect()
         self.memory.remember("waifu_name", self.waifu_name)
         self.memory.remember("persona", """
             Você é Kiana, uma VTuber carinhosa, divertida e um pouco tsundere.
@@ -42,7 +42,7 @@ class Waifu:
 
             self.logger.log("info", "Waifu", f"Ação: {action} | Emoção: {emotion}")
 
-            await self.skills.execute("emotion", emotion, self.avatar)
+            #await self.skills.execute("emotion", emotion, self.avatar)
 
             if not self.skills.has_skill("respond"):
                 self.logger.log("error", "Waifu", "Skill 'respond' não encontrada!")
