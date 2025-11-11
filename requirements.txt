@@ -7,3 +7,4 @@ requests
 ollama
 playsound
 murf
+pyautogui

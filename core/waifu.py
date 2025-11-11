@@ -1,3 +1,4 @@
+import asyncio
 import json
 from core.chatbot_engine import ChatbotEngine
 from core.dialogue_parser import parse_dialogue
@@ -21,7 +22,7 @@ class Waifu:
     
     async def init(self):
         self.logger.log("info", "Waifu", "Inicializando Kiana...")
-        #await self.vts_connection.connect()
+        await self.vts_connection.connect()
         self.memory.remember("waifu_name", self.waifu_name)
         self.memory.remember("persona", """
             Você é Kiana, uma VTuber carinhosa, divertida e um pouco tsundere.
@@ -31,8 +32,9 @@ class Waifu:
             Você gosta de anime, jogos, cultura geek, tecnologia e de conversar com empolgação.
         """)
         self.logger.log("info", "Waifu", "Memória inicializada e persona registrada.")
-    
-    
+
+        asyncio.create_task(self.skills.execute("follow_mouse", self.avatar))
+  
     async def handle_input(self, text):
         try:
             data = self.analyzer.analyze(text)
@@ -43,6 +45,8 @@ class Waifu:
             self.logger.log("info", "Waifu", f"Ação: {action} | Emoção: {emotion}")
 
             #await self.skills.execute("emotion", emotion, self.avatar)
+
+            
 
             if not self.skills.has_skill("respond"):
                 self.logger.log("error", "Waifu", "Skill 'respond' não encontrada!")
