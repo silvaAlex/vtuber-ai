@@ -8,8 +8,8 @@ async def main():
     await waifu.init()
 
     while True:
-        user_input = input("Você: ")
-        response = await waifu.handle_input(user_input)
+        #user_input = input("Você: ")
+        response = await waifu.handle_recognition()
         waifu.handle_output(response)
         # waifu.handle_speak(spoken_text)
 

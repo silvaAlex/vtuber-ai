@@ -8,3 +8,7 @@ ollama
 playsound
 murf
 pyautogui
+faster-whisper
+sounddevice
+numpy
+rich

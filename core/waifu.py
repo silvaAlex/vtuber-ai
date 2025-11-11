@@ -22,7 +22,7 @@ class Waifu:
     
     async def init(self):
         self.logger.log("info", "Waifu", "Inicializando Kiana...")
-        await self.vts_connection.connect()
+        #await self.vts_connection.connect()
         self.memory.remember("waifu_name", self.waifu_name)
         self.memory.remember("persona", """
             Você é Kiana, uma VTuber carinhosa, divertida e um pouco tsundere.
@@ -33,7 +33,7 @@ class Waifu:
         """)
         self.logger.log("info", "Waifu", "Memória inicializada e persona registrada.")
 
-        asyncio.create_task(self.skills.execute("follow_mouse", self.avatar))
+        #asyncio.create_task(self.skills.execute("follow_mouse", self.avatar))
   
     async def handle_input(self, text):
         try:
@@ -45,8 +45,6 @@ class Waifu:
             self.logger.log("info", "Waifu", f"Ação: {action} | Emoção: {emotion}")
 
             #await self.skills.execute("emotion", emotion, self.avatar)
-
-            
 
             if not self.skills.has_skill("respond"):
                 self.logger.log("error", "Waifu", "Skill 'respond' não encontrada!")
@@ -69,6 +67,14 @@ class Waifu:
             self.logger.log("error", "Waifu", f"Erro em handle_input: {e}")
             return "Ops... bug no meu cérebro fofinho 💢"
     
+    async def handle_recognition(self, duration=30):
+        result = self.skills.execute("asr", {"duration": duration})
+
+        response = await self.handle_input(result)
+
+        return response
+
+
     def handle_speak(self, response):
         return self.skills.execute("speak_murf", response)
 
